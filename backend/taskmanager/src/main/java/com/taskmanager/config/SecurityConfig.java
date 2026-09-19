@@ -3,6 +3,8 @@ package com.taskmanager.config;
 import com.taskmanager.repository.UserRepository;
 import com.taskmanager.security.JwtAuthenticationFilter;
 import com.taskmanager.security.JwtService;
+import com.taskmanager.security.RestAccessDeniedHandler;
+import com.taskmanager.security.RestAuthenticationEntryPoint;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpMethod;
@@ -27,13 +29,18 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http,
                                                    JwtAuthenticationFilter jwtAuthenticationFilter,
-                                                   AuthenticationProvider authenticationProvider) throws Exception {
+                                                   AuthenticationProvider authenticationProvider,
+                                                   RestAuthenticationEntryPoint authenticationEntryPoint,
+                                                   RestAccessDeniedHandler accessDeniedHandler) throws Exception {
         return http
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers(HttpMethod.POST, "/api/auth/**").permitAll()
                         .anyRequest().authenticated())
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(authenticationEntryPoint)
+                        .accessDeniedHandler(accessDeniedHandler))
                 .authenticationProvider(authenticationProvider)
                 .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
