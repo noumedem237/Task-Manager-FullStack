@@ -22,9 +22,31 @@ class InitialBinding extends Bindings {
     Get.put(SecureTokenStorage(const FlutterSecureStorage()), permanent: true);
     Get.put(DioClient(Get.find()), permanent: true);
     Get.put(TasksRemoteDataSource(Get.find<DioClient>().dio), permanent: true);
-    Get.put<AuthRepository>(AuthRepositoryImpl(AuthRemoteDataSource(Get.find<DioClient>().dio), Get.find()), permanent: true);
-    Get.put(AuthController(Get.find(), LoginUseCase(Get.find()), RegisterUseCase(Get.find())), permanent: true);
-    Get.put<TasksRepository>(TasksRepositoryImpl(TasksRemoteDataSource(Get.find<DioClient>().dio), Get.find<AppPreferences>()), permanent: true);
-    Get.put(TasksController(GetTasksUseCase(Get.find()), Get.find()), permanent: true);
+    Get.put<AuthRepository>(
+      AuthRepositoryImpl(
+        AuthRemoteDataSource(Get.find<DioClient>().dio),
+        Get.find(),
+      ),
+      permanent: true,
+    );
+    Get.put(
+      AuthController(
+        Get.find(),
+        LoginUseCase(Get.find()),
+        RegisterUseCase(Get.find()),
+      ),
+      permanent: true,
+    );
+    Get.put<TasksRepository>(
+      TasksRepositoryImpl(
+        TasksRemoteDataSource(Get.find<DioClient>().dio),
+        Get.find<AppPreferences>(),
+      ),
+      permanent: true,
+    );
+    Get.put(
+      TasksController(GetTasksUseCase(Get.find()), Get.find()),
+      permanent: true,
+    );
   }
 }

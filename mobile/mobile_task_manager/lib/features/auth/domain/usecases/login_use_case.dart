@@ -1,4 +1,5 @@
 import '../repositories/auth_repository.dart';
+
 class LoginUseCase {
   const LoginUseCase(this._repository);
   final AuthRepository _repository;
