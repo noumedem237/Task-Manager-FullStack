@@ -85,7 +85,7 @@ export function AuthPage({ mode }: Props) {
               ? "Ravi de vous revoir. Vos tâches vous attendent."
               : "Commencez à organiser vos tâches en quelques secondes."}
           </p>
-          <form onSubmit={submit} noValidate>
+          <form onSubmit={submit}>
             <label>
               Adresse e-mail
               <input

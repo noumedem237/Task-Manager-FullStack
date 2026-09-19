@@ -10,6 +10,7 @@ class DioClient {
           baseUrl: AppConstants.apiBaseUrl,
           connectTimeout: AppConstants.connectTimeout,
           receiveTimeout: AppConstants.receiveTimeout,
+          sendTimeout: AppConstants.connectTimeout,
           headers: const {'Accept': 'application/json'},
         )) {
     dio.interceptors.add(InterceptorsWrapper(
@@ -21,12 +22,21 @@ class DioClient {
       onError: (error, handler) {
         final statusCode = error.response?.statusCode;
         final payload = error.response?.data;
-        final message = payload is Map<String, dynamic> ? payload['message'] as String? : null;
+        final body = payload is Map
+            ? Map<Object?, Object?>.from(payload)
+            : const <Object?, Object?>{};
+        final message = body['message'] is String
+            ? body['message'] as String
+            : _messageFor(statusCode);
+        final rawValidationErrors = body['validationErrors'];
+        final validationErrors = rawValidationErrors is Map
+            ? rawValidationErrors.map((key, value) => MapEntry('$key', '$value'))
+            : const <String, String>{};
         handler.reject(DioException(
           requestOptions: error.requestOptions,
           response: error.response,
           type: error.type,
-          error: ApiException(message ?? _messageFor(statusCode), statusCode: statusCode),
+          error: ApiException(message, statusCode: statusCode, validationErrors: validationErrors),
         ));
       },
     ));
@@ -36,8 +46,9 @@ class DioClient {
   final Dio dio;
 
   String _messageFor(int? statusCode) {
-    if (statusCode == 401) return 'Votre session a expiré.';
-    if (statusCode != null && statusCode >= 500) return 'Le serveur est indisponible. Réessayez plus tard.';
-    return 'Une erreur réseau est survenue.';
+    if (statusCode == 401) return 'Votre session a expiré. Veuillez vous reconnecter.';
+    if (statusCode == 400) return 'Les données envoyées sont invalides.';
+    if (statusCode != null && statusCode >= 500) return 'Le serveur rencontre un problème. Réessayez plus tard.';
+    return 'Connexion au serveur impossible. Vérifiez votre réseau.';
   }
 }

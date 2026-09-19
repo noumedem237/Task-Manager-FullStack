@@ -3,6 +3,11 @@ class AuthResponseModel {
 
   final String token;
 
-  factory AuthResponseModel.fromJson(Map<String, dynamic> json) =>
-      AuthResponseModel(token: json['token'] as String);
+  factory AuthResponseModel.fromJson(Map<String, dynamic> json) {
+    final token = json['token'];
+    if (token is! String || token.isEmpty) {
+      throw const FormatException('Le jeton reçu est invalide.');
+    }
+    return AuthResponseModel(token: token);
+  }
 }
