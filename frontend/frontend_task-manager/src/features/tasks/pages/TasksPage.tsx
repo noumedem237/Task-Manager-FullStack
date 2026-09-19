@@ -55,15 +55,26 @@ export function TasksPage() {
     if (!token || !draft.title.trim()) return;
     setError("");
     try {
-      if (editing) {
-        const task = await updateTask(token, editing.id, draft);
-        setTasks((all) => all.map((t) => (t.id === task.id ? task : t)));
-      } else {
-        const task = await createTask(token, draft);
-        setTasks((all) => [task, ...all]);
-      }
+      const task = await createTask(token, draft);
+      setTasks((all) => [task, ...all]);
       setDraft(blank);
+    } catch (caught) {
+      setError(
+        caught instanceof ApiError
+          ? caught.message
+          : "Enregistrement impossible.",
+      );
+    }
+  }
+  async function saveInlineEdit(e: FormEvent) {
+    e.preventDefault();
+    if (!token || !editing || !draft.title.trim()) return;
+    setError("");
+    try {
+      const task = await updateTask(token, editing.id, draft);
+      setTasks((all) => all.map((item) => (item.id === task.id ? task : item)));
       setEditing(null);
+      setDraft(blank);
     } catch (caught) {
       setError(
         caught instanceof ApiError
@@ -79,7 +90,10 @@ export function TasksPage() {
       description: task.description ?? "",
       status: task.status,
     });
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    document.getElementById(`task-${task.id}`)?.scrollIntoView({
+      behavior: "smooth",
+      block: "center",
+    });
   };
   const remove = async (id: number) => {
     if (!token || !window.confirm("Supprimer cette tâche ?")) return;
@@ -113,7 +127,7 @@ export function TasksPage() {
           </div>
         </section>
         <section className="task-editor">
-          <h2>{editing ? "Modifier la tâche" : "Ajouter une tâche"}</h2>
+          <h2>Ajouter une tâche</h2>
           <form onSubmit={save}>
             <input
               value={draft.title}
@@ -143,20 +157,8 @@ export function TasksPage() {
               ))}
             </select>
             <button className="primary-button">
-              {editing ? "Enregistrer" : "Ajouter"} <span>+</span>
+              Ajouter <span>+</span>
             </button>
-            {editing && (
-              <button
-                type="button"
-                className="cancel"
-                onClick={() => {
-                  setEditing(null);
-                  setDraft(blank);
-                }}
-              >
-                Annuler
-              </button>
-            )}
           </form>
         </section>
         <section className="task-toolbar">
@@ -184,7 +186,11 @@ export function TasksPage() {
             <p>Chargement de vos tâches…</p>
           ) : visible.length ? (
             visible.map((task) => (
-              <article className="task-item" key={task.id}>
+              <article
+                className="task-item"
+                id={`task-${task.id}`}
+                key={task.id}
+              >
                 <button
                   className={`status-dot ${task.status}`}
                   onClick={() =>
@@ -202,22 +208,73 @@ export function TasksPage() {
                 >
                   {task.status === "DONE" ? "✓" : ""}
                 </button>
-                <div>
-                  <h3 className={task.status === "DONE" ? "done" : ""}>
-                    {task.title}
-                  </h3>
-                  {task.description && <p>{task.description}</p>}
-                  <small>{labels[task.status]}</small>
-                </div>
-                <div className="task-actions">
-                  <button onClick={() => edit(task)}>Modifier</button>
-                  <button
-                    className="danger"
-                    onClick={() => void remove(task.id)}
-                  >
-                    Supprimer
-                  </button>
-                </div>
+                {editing?.id === task.id ? (
+                  <form className="inline-editor" onSubmit={saveInlineEdit}>
+                    <input
+                      value={draft.title}
+                      onChange={(e) =>
+                        setDraft({ ...draft, title: e.target.value })
+                      }
+                      maxLength={150}
+                      required
+                    />
+                    <input
+                      value={draft.description ?? ""}
+                      onChange={(e) =>
+                        setDraft({ ...draft, description: e.target.value })
+                      }
+                      placeholder="Ajouter une note (facultatif)"
+                      maxLength={5000}
+                    />
+                    <select
+                      value={draft.status}
+                      onChange={(e) =>
+                        setDraft({
+                          ...draft,
+                          status: e.target.value as TaskStatus,
+                        })
+                      }
+                    >
+                      {Object.entries(labels).map(([value, label]) => (
+                        <option key={value} value={value}>
+                          {label}
+                        </option>
+                      ))}
+                    </select>
+                    <div className="inline-actions">
+                      <button className="save-edit">Enregistrer</button>
+                      <button
+                        type="button"
+                        className="cancel"
+                        onClick={() => {
+                          setEditing(null);
+                          setDraft(blank);
+                        }}
+                      >
+                        Annuler
+                      </button>
+                    </div>
+                  </form>
+                ) : (
+                  <>
+                    <div>
+                      <h3 className={task.status === "DONE" ? "done" : ""}>
+                        {task.title}
+                      </h3>
+                      {task.description && <p>{task.description}</p>}
+                      <small>{labels[task.status]}</small>
+                    </div>
+                    <div className="task-actions">
+                      <button onClick={() => edit(task)}>Modifier</button>
+                      <button
+                        className="danger"
+                        onClick={() => void remove(task.id)}
+                      >
+                        Supprimer
+                      </button>
+                    </div>
+                  </>
+                )}
               </article>
             ))
           ) : (

@@ -186,6 +186,48 @@
 .task-item > div:nth-child(2) {
   flex: 1;
 }
+.inline-editor {
+  flex: 1;
+  display: grid;
+  grid-template-columns: minmax(140px, 1.2fr) minmax(140px, 1.4fr) 125px auto;
+  gap: 8px;
+  align-items: center;
+}
+.inline-editor input,
+.inline-editor select {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #b8d2cf;
+  border-radius: 8px;
+  padding: 9px 10px;
+  font: inherit;
+}
+.inline-editor input:focus,
+.inline-editor select:focus {
+  outline: 3px solid rgba(0, 156, 154, 0.13);
+  border-color: #009c9a;
+}
+.inline-actions {
+  display: flex;
+  gap: 6px;
+}
+.inline-actions button {
+  border: 0;
+  border-radius: 7px;
+  padding: 9px 10px;
+  cursor: pointer;
+  font: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+}
+.inline-actions .save-edit {
+  background: #009c9a;
+  color: #fff;
+}
+.inline-actions .cancel {
+  background: #eaf1f0;
+  color: #496967;
+}
 .task-item h3 {
   margin: 1px 0 5px;
   font-size: 1rem;
@@ -265,6 +307,12 @@
   .task-item {
     padding: 14px;
     gap: 10px;
+  }
+  .inline-editor {
+    grid-template-columns: 1fr;
+  }
+  .inline-actions {
+    justify-content: flex-start;
   }
   .task-actions {
     flex-direction: column;
