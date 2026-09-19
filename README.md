@@ -2,6 +2,13 @@
 
 Ce dépôt contient une API Spring Boot, une application web React/Vite et une application mobile Flutter.
 
+## Description technique rapide
+
+- **Backend** : API REST Spring Boot organisée autour de contrôleurs, services et dépôts JPA. L'authentification repose sur JWT, les mots de passe sont chiffrés avec BCrypt et les données sont persistées dans MySQL.
+- **Frontend** : application React avec TypeScript et Vite. Les pages sont protégées par l'état d'authentification, les appels HTTP sont centralisés et l'URL de l'API est configurable avec `VITE_API_URL`.
+- **Mobile** : application Flutter structurée par fonctionnalités et couches (`data`, `domain`, `presentation`). Elle utilise GetX pour l'injection de dépendances, la navigation et l'état, Dio pour les appels réseau et un stockage local pour la session et le cache des tâches.
+- **Exécution** : Docker Compose orchestre MySQL, le backend et le frontend. La CI GitHub Actions exécute les tests Maven et vérifie le build frontend à chaque push et pull request.
+
 ## Prérequis
 
 Installez Java 17, Node.js 20 ou supérieur, Flutter et Docker Desktop. Exécutez les commandes depuis la racine du dépôt, sauf indication contraire.
