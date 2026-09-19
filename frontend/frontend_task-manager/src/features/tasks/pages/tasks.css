@@ -48,6 +48,9 @@
   font-size: 0.88rem;
   font-weight: 700;
   box-shadow: 0 3px 8px rgba(255, 122, 0, 0.25);
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
   transition:
     background-color 0.2s,
     transform 0.2s;
@@ -60,6 +63,23 @@
   background: #df6800;
   color: #fff;
   transform: translateY(-1px);
+}
+.logout:disabled {
+  cursor: wait;
+  opacity: 0.86;
+}
+.logout-spinner {
+  width: 14px;
+  height: 14px;
+  border: 2px solid rgba(255, 255, 255, 0.45);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: logout-spin 0.7s linear infinite;
+}
+@keyframes logout-spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 .logout:focus-visible {
   outline: 3px solid rgba(255, 122, 0, 0.35);

@@ -24,9 +24,18 @@ export function AuthPage({ mode }: Props) {
     setError("");
     setIsSubmitting(true);
     try {
-      const response = await (isLogin
-        ? login({ email, password })
-        : register({ email, password }));
+      const request = (
+        isLogin ? login({ email, password }) : register({ email, password })
+      ).then(
+        (response) => ({ response }),
+        (requestError: unknown) => ({ requestError }),
+      );
+      const [, result] = await Promise.all([
+        new Promise((resolve) => window.setTimeout(resolve, 2000)),
+        request,
+      ]);
+      if ("requestError" in result) throw result.requestError;
+      const { response } = result;
       setToken(response.token);
       navigate(ROUTES.tasks, { replace: true });
     } catch (caught) {

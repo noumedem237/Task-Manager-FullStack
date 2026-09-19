@@ -22,6 +22,7 @@ export function TasksPage() {
   const [editing, setEditing] = useState<Task | null>(null);
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(true);
+  const [isLoggingOut, setIsLoggingOut] = useState(false);
   const load = useCallback(async () => {
     if (!token) return;
     setLoading(true);
@@ -44,9 +45,7 @@ export function TasksPage() {
       tasks.filter(
         (t) =>
           (filter === "ALL" || t.status === filter) &&
-          `${t.title} ${t.description ?? ""}`
-            .toLowerCase()
-            .includes(query.toLowerCase()),
+          t.title.toLowerCase().includes(query.toLowerCase()),
       ),
     [tasks, filter, query],
   );
@@ -104,14 +103,26 @@ export function TasksPage() {
       setError("La suppression a échoué.");
     }
   };
+  const handleLogout = () => {
+    if (isLoggingOut) return;
+    setIsLoggingOut(true);
+    window.setTimeout(logout, 2000);
+  };
   return (
     <main className="tasks-page">
       <header className="tasks-header">
         <div className="task-brand">
           <span>✓</span> Taskflow
         </div>
-        <button className="logout" onClick={logout}>
-          Se déconnecter
+        <button
+          className={`logout ${isLoggingOut ? "is-loading" : ""}`}
+          disabled={isLoggingOut}
+          onClick={handleLogout}
+        >
+          {isLoggingOut ? (
+            <span className="logout-spinner" aria-hidden="true" />
+          ) : null}
+          {isLoggingOut ? "Déconnexion…" : "Se déconnecter"}
         </button>
       </header>
       <div className="tasks-content">
