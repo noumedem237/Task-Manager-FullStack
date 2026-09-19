@@ -42,7 +42,6 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
         } catch (RuntimeException ignored) {
-            // An invalid token leaves the request unauthenticated.
         }
 
         filterChain.doFilter(request, response);

@@ -18,21 +18,6 @@ export async function apiRequest<T>(
   path: string,
   options: RequestInit = {},
 ): Promise<T> {
-  if (options.body && typeof options.body === "string") {
-    let payload: Record<string, unknown> | null = null;
-
-    try {
-      payload = JSON.parse(options.body) as Record<string, unknown>;
-    } catch {
-      // Only JSON form payloads are validated here.
-    }
-
-    if (payload) {
-      const validationError = validateRequestPayload(path, payload);
-      if (validationError) throw new ApiError(validationError, 400);
-    }
-  }
-
   let response: Response;
 
   try {

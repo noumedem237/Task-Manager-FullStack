@@ -26,8 +26,6 @@ class AuthController extends GetxController {
     isLoading.value = true;
     errorMessage.value = '';
     try {
-      // The web application deliberately keeps the progress state visible for
-      // two seconds, even when the API answers immediately.
       await Future.wait<void>([
         action(),
         Future<void>.delayed(const Duration(seconds: 2)),

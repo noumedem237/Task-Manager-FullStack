@@ -146,7 +146,6 @@ export function TasksPage() {
               placeholder="Que devez-vous faire ?"
               maxLength={150}
               required
-              required
             />
             <input
               value={draft.description ?? ""}
@@ -228,7 +227,6 @@ export function TasksPage() {
                         setDraft({ ...draft, title: e.target.value })
                       }
                       maxLength={150}
-                      required
                       required
                     />
                     <input

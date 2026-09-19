@@ -225,8 +225,6 @@ class _TasksPageState extends State<TasksPage> {
     if (confirmed != true) return false;
     final deleted = await controller.delete(id);
     if (!deleted) Get.snackbar('Suppression impossible', controller.error.value);
-    // The controller already removes the item after DELETE succeeds. Returning
-    // false avoids Dismissible attempting a second removal during its animation.
     return false;
   }
 }

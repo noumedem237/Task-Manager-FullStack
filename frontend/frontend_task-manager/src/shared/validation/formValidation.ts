@@ -1,4 +1,3 @@
-/** Errors raised before a form may trigger a network request. */
 export class FormValidationError extends Error {
   constructor(message: string) {
     super(message);
